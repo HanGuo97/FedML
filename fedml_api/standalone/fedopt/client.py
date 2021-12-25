@@ -24,9 +24,9 @@ class Client:
         return self.local_sample_number
 
     def train(self, w_global):
-        self.model_trainer.set_model_params(w_global)
+        self.model_trainer.receive_messages(w_global)
         self.model_trainer.train(self.local_training_data, self.device, self.args)
-        weights = self.model_trainer.get_model_params()
+        weights = self.model_trainer.send_messages()
         return weights
 
     def local_test(self, b_use_test_dataset):
