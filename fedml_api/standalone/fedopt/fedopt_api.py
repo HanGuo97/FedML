@@ -91,7 +91,7 @@ class FedOptAPI(object):
                                             self.train_data_local_num_dict[client_idx])
 
                 # train on new dataset
-                w = client.train(w_global)
+                w = client.train(w_global, round_index=round_idx)
                 w_locals.append((client.get_sample_number(), copy.deepcopy(w)))
                 # loss_locals.append(copy.deepcopy(loss))
                 # logging.info('Client {:3d}, loss {:.3f}'.format(client_idx, loss))

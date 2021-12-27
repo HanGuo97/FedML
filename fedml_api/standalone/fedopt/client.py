@@ -23,9 +23,12 @@ class Client:
     def get_sample_number(self):
         return self.local_sample_number
 
-    def train(self, w_global):
+    def train(self, w_global, round_index: int):
         self.model_trainer.receive_messages(w_global)
-        self.model_trainer.train(self.local_training_data, self.device, self.args)
+        self.model_trainer.train(
+            round_index=round_index,
+            train_data=self.local_training_data,
+            device=self.device, args=self.args)
         weights = self.model_trainer.send_messages()
         return weights
 
