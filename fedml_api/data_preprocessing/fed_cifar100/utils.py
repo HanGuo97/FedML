@@ -1,5 +1,6 @@
 import torch
 import torchvision.transforms as transforms
+from typing import Callable, Tuple, Optional
 
 '''
 preprocess reference : https://github.com/google-research/federated/blob/master/utils/datasets/cifar100_dataset.py
@@ -34,3 +35,33 @@ def preprocess_cifar_img(img, train):
         (i.permute(2,0,1)) 
         for i in img])
     return transoformed_img
+
+
+class CIFAR100Dataset(torch.utils.data.Dataset):
+
+    def __init__(
+            self,
+            Xs: torch.Tensor,
+            Ys: torch.Tensor,
+            transform: Optional[Callable] = None,
+    ) -> None:
+        if Xs.shape[0] != Ys.shape[0]:
+            raise ValueError("Xs and Ys should have the same length.")
+        if not callable(transform):
+            raise ValueError("transform should be callable.")
+
+        self.Xs = Xs
+        self.Ys = Ys
+        self.transform = transform
+
+    def __getitem__(self, index: int) -> Tuple[torch.Tensor, torch.Tensor]:
+        _Xs = self.Xs[index]
+        _Ys = self.Ys[index]
+
+        if self.transform is not None:
+            _Xs = self.transform(_Xs)
+
+        return _Xs, _Ys
+
+    def __len__(self) -> int:
+        return self.Xs.shape[0]
