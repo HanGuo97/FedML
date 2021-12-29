@@ -37,6 +37,21 @@ def preprocess_cifar_img(img, train):
     return transoformed_img
 
 
+def get_cifar_preprocess_fn(distort: bool) -> Callable[[torch.Tensor], torch.Tensor]:
+    # We can also apply no distortions to the training data.
+    # as is done in some of Google's federated implementations.
+    def preprocess_fn(X: torch.Tensor) -> torch.Tensor:
+        # scale img to range [0,1] to fit ToTensor api
+        X = torch.div(X, 255.0)
+        fn = cifar100_transform(
+            X.type(torch.DoubleTensor).mean(),
+            X.type(torch.DoubleTensor).std(),
+            train=distort)
+        return fn(X.permute(2, 0, 1))
+
+    return preprocess_fn
+
+
 class CIFAR100Dataset(torch.utils.data.Dataset):
 
     def __init__(
