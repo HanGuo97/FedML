@@ -51,21 +51,34 @@ def get_dataloader(dataset, data_dir, train_bs, test_bs, client_idx = None):
             test_y = np.vstack([test_h5[_EXAMPLE][client_id_test][_LABEL][()]]).squeeze()
 
     # preprocess 
-    train_x = utils.preprocess_cifar_img(torch.tensor(train_x), train=True)
-    train_y = torch.tensor(train_y)
-    if len(test_x) != 0:
-        test_x = utils.preprocess_cifar_img(torch.tensor(test_x), train=False)
-        test_y = torch.tensor(test_y)
+    # train_x = utils.preprocess_cifar_img(torch.tensor(train_x), train=True)
+    # train_y = torch.tensor(train_y)
+    # if len(test_x) != 0:
+        # test_x = utils.preprocess_cifar_img(torch.tensor(test_x), train=False)
+        # test_y = torch.tensor(test_y)
     
     # generate dataloader
-    train_ds = data.TensorDataset(train_x, train_y)
+    # train_ds = data.TensorDataset(train_x, train_y)
+
+    # Note that in Google's implementation, training images are not
+    # randomly preprocessed, but centrally cropped like the test data.
+    train_ds = utils.CIFAR100Dataset(
+        Xs=torch.tensor(train_x),
+        Ys=torch.tensor(train_y),
+        transform=utils.get_cifar_preprocess_fn(
+            distort=False))
     train_dl = data.DataLoader(dataset=train_ds,
                                batch_size=train_bs,
                                shuffle=True,
                                drop_last=False)
 
     if len(test_x) != 0:
-        test_ds = data.TensorDataset(test_x, test_y)
+        # test_ds = data.TensorDataset(test_x, test_y)
+        test_ds = utils.CIFAR100Dataset(
+            Xs=torch.tensor(test_x),
+            Ys=torch.tensor(test_y),
+            transform=utils.get_cifar_preprocess_fn(
+                distort=False))
         test_dl = data.DataLoader(dataset=test_ds,
                                   batch_size=test_bs,
                                   shuffle=True,
