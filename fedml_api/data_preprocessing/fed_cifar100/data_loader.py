@@ -66,7 +66,7 @@ def get_dataloader(dataset, data_dir, train_bs, test_bs, client_idx = None):
         Xs=torch.tensor(train_x),
         Ys=torch.tensor(train_y),
         transform=utils.get_cifar_preprocess_fn(
-            distort=False))
+            distort=True))
     train_dl = data.DataLoader(dataset=train_ds,
                                batch_size=train_bs,
                                shuffle=True,
@@ -81,7 +81,7 @@ def get_dataloader(dataset, data_dir, train_bs, test_bs, client_idx = None):
                 distort=False))
         test_dl = data.DataLoader(dataset=test_ds,
                                   batch_size=test_bs,
-                                  shuffle=True,
+                                  shuffle=False,
                                   drop_last=False)
     else:
         test_dl = None
