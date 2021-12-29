@@ -55,13 +55,13 @@ class CIFAR100Dataset(torch.utils.data.Dataset):
         self.transform = transform
 
     def __getitem__(self, index: int) -> Tuple[torch.Tensor, torch.Tensor]:
-        _Xs = self.Xs[index]
-        _Ys = self.Ys[index]
+        _X = self.Xs[index]
+        _Y = self.Ys[index]
 
         if self.transform is not None:
-            _Xs = self.transform(_Xs)
+            _X = self.transform(_X)
 
-        return _Xs, _Ys
+        return _X, _Y
 
     def __len__(self) -> int:
         return self.Xs.shape[0]
