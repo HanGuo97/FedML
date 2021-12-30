@@ -6,22 +6,25 @@ from typing import Callable, Tuple, Optional
 preprocess reference : https://github.com/google-research/federated/blob/master/utils/datasets/cifar100_dataset.py
 '''
 
+
 def cifar100_transform(img_mean, img_std, train = True, crop_size = (24,24)):
     """cropping, flipping, and normalizing."""
+    CIFAR_MEAN = [0.5071, 0.4865, 0.4409]
+    CIFAR_STD = [0.2673, 0.2564, 0.2762]
     if train:
         return transforms.Compose([
             transforms.ToPILImage(),
-            transforms.RandomCrop(crop_size),
+            transforms.RandomCrop(32, padding=4),
             transforms.RandomHorizontalFlip(),
             transforms.ToTensor(),
-            transforms.Normalize(mean=img_mean, std=img_std),
+            transforms.Normalize(CIFAR_MEAN, CIFAR_STD),
         ])
     else:
         return transforms.Compose([
             transforms.ToPILImage(),
-            transforms.CenterCrop(crop_size),
+            # transforms.CenterCrop(crop_size),
             transforms.ToTensor(),
-            transforms.Normalize(mean=img_mean, std=img_std),
+            transforms.Normalize(CIFAR_MEAN, CIFAR_STD),
         ])
 
 
@@ -41,7 +44,6 @@ def get_cifar_preprocess_fn(distort: bool) -> Callable[[torch.Tensor], torch.Ten
     # We can also apply no distortions to the training data.
     # as is done in some of Google's federated implementations.
     def preprocess_fn(X: torch.Tensor) -> torch.Tensor:
-        raise ValueError
         # scale img to range [0,1] to fit ToTensor api
         X = torch.div(X, 255.0)
         fn = cifar100_transform(
