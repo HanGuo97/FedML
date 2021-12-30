@@ -41,6 +41,7 @@ def get_cifar_preprocess_fn(distort: bool) -> Callable[[torch.Tensor], torch.Ten
     # We can also apply no distortions to the training data.
     # as is done in some of Google's federated implementations.
     def preprocess_fn(X: torch.Tensor) -> torch.Tensor:
+        raise ValueError
         # scale img to range [0,1] to fit ToTensor api
         X = torch.div(X, 255.0)
         fn = cifar100_transform(
